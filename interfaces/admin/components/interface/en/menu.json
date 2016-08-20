@@ -111,6 +111,8 @@
 		{"page_name":"Mail campaigns", "menu_icon":"", "hide":true},
 	"people/press":
 		{"page_name":"Press coverage", "menu_icon":"paperclip" },
+	"people/emailtemplate":
+		{"page_name":"Email Template", "menu_icon":"email" },
 
 
 	"privacy":

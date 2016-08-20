@@ -1,0 +1,57 @@
+{{! corresponding files: people_emailtemplate.php & people_emailtemplate.json }}
+
+<header>
+	
+<div class="pure-u-1 pure-u-md-1-2">
+<h4 class="secondary-title">{{ui_title}}</h4>
+</div><!--pure-->
+</header>
+
+<ul class="alternating">
+	<li>
+		<a class="primary" href="{{www_path}}/people/emailtemplate/view/{{id}}">
+		<strong>First template name</strong></a>
+		<div class="more"><div class="toggle"></div><!--toggle-->
+			<div class="actions">
+				<div class="action-inner">
+					<a href="{{www_path}}/people/lists/edit/{{id}}" class="mininav_flush"><div class="icon icon-pencil"></div><!--icon-->Edit</a>
+					<a href="{{www_path}}/people/lists/delete/{{id}}" class="mininav_flush needsconfirmation"><div class="icon icon-ban"></div><!--icon-->Delete</a>
+				</div><!--action-inner-->
+			</div><!--actions-->
+		</div><!--more-->
+	</li>
+	<li>
+		<a class="primary" href="{{www_path}}/people/emailtemplate/view/{{id}}">
+		<strong>Second template name</strong></a>
+		<div class="more"><div class="toggle"></div><!--toggle-->
+			<div class="actions">
+				<div class="action-inner">
+					<a href="{{www_path}}/people/lists/edit/{{id}}" class="mininav_flush"><div class="icon icon-pencil"></div><!--icon-->Edit</a>
+					<a href="{{www_path}}/people/lists/delete/{{id}}" class="mininav_flush needsconfirmation"><div class="icon icon-ban"></div><!--icon-->Delete</a>
+				</div><!--action-inner-->
+			</div><!--actions-->
+		</div><!--more-->
+	</li>
+</ul>
+
+<a class="button lightboxed" href="{{www_path}}/people/emailtemplate/add">Create a new template</a>
+
+<div id="settings-drawer" class="drawer prefpanel defaultopen pure-u-1">
+		<div class="itemnav pure-u-1">
+			<div class="pure-u-1 pure-u-md-1-2">
+				<h4 class="drawerhandle title"><div class="icon icon-wrench"></div><!--icon--><span>Email template settings</span></h4>
+			</div>
+				<div class="drawercontent">
+								 <div class="pref-inner">
+										 <h5>Current template</h5>
+										 <select>
+										 	<option>CASH Default</option>
+										 	<option>Different Template</option>
+										 </select>
+<button>Use this template</button>
+								 </div><!--pref-inner-->
+				</div><!--drawercontent-->
+		</div><!--itemnav-->
+</div><!--drawer prefpanel-->
+
+</div><!--pure-->
