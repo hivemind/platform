@@ -9,8 +9,14 @@ $mail_from = !empty($_POST['mail_from']) ? $_POST['mail_from'] : "";
 
 $test_recipients = !empty($_POST['test_recipients']) ? preg_replace('/\s+/', '', $_POST['test_recipients']) : "";
 
+$persistence_r = new CASHRequest(null);
+$persistence_r->startSession();
+
 // send a test email
 if (!empty($_POST['action']) && $_POST['action'] == 'dotestsend') {
+
+    $persistence_r->sessionSet('mass_mailing_content', json_encode($_POST));
+
     // we need to do some direct send here so we're not creating a redundant test email
 
     $mailing_result = new CASHRequest(
@@ -105,11 +111,14 @@ if (!empty($_POST['action']) && $_POST['action'] == 'dolivesend') {
 	);
 
 	if ($mailing_result) {
+        $persistence_r->sessionClear('mass_mailing_content');
 		AdminHelper::formSuccess('Success. The mail is sent, just kick back and watch.','/people/mailings/');
-	} else {
+    } else {
 		AdminHelper::formFailure('Error. Something just didn\'t work right.','/people/mailings/');
 	}
 }
+
+$effective_user = AdminHelper::getPersistentData('cash_effective_user');
 
 $settings_test_object = new CASHConnection(AdminHelper::getPersistentData('cash_effective_user'));
 $settings_test_array  = $settings_test_object->getConnectionsByScope('mass_email');
@@ -127,13 +136,20 @@ $user_request = $cash_admin->requestAndStore(
     )
 );
 
+$mailing_content = $persistence_r->sessionGet('mass_mailing_content');
+
 // let's just set template vars up here, for persistence' sake
-$cash_admin->page_data['html_content'] = $html_content;
-$cash_admin->page_data['subject'] = $subject;
-$cash_admin->page_data['list_id'] = $list_id;
-$cash_admin->page_data['connection_id'] = $connection_id;
-$cash_admin->page_data['test_recipients'] = $test_recipients;
-$cash_admin->page_data['mail_from'] = $mail_from;
+if (!empty($mailing_content)) {
+    $values = json_decode($mailing_content, true);
+
+    $cash_admin->page_data['html_content'] = $values['html_content'];
+    $cash_admin->page_data['subject'] = $values['mail_subject'];
+    $cash_admin->page_data['list_id'] = $values['email_list_id'];
+    $cash_admin->page_data['connection_id'] = $values['connection_id'];
+    $cash_admin->page_data['test_recipients'] = $values['test_recipients'];
+    $cash_admin->page_data['mail_from'] = $values['mail_from'];
+}
+
 
 $cash_admin->page_data['email_address'] = $user_request['payload']['email_address'];
 
