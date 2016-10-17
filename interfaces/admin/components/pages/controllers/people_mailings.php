@@ -47,8 +47,8 @@ if (!empty($_POST['action']) && $_POST['action'] == 'dotestsend') {
         $subject, // message subject
         [ // global merge vars
             [
-                'name' => 'unsubscribelink',
-                'content' => "<a href='http://google.com'>Unsubscribe</a>"
+                'name' => 'cash_listid',
+                'content' => 1234
             ]
         ],
         [], // local merge vars (per email)

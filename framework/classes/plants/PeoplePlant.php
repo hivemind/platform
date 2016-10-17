@@ -1279,8 +1279,8 @@ class PeoplePlant extends PlantBase {
 						$mailing['subject'], // message subject
 						[ // global merge vars
 							[
-								'name' => 'unsubscribelink',
-								'content' => "<a href='http://google.com'>Unsubscribe</a>"
+								'name' => 'cash_listid',
+								'content' => $mailing['list_id']
 							]
 						],
 						[], // local merge vars (per email)
@@ -1550,7 +1550,9 @@ class PeoplePlant extends PlantBase {
 						'message_title' => $title,
 						'subject' => $subject,
 						'cdn_url' => (defined('CDN_URL')) ? CDN_URL : CASH_ADMIN_URL,
-						'unsubscribe' => 'https://cashmusic.org'
+						'unsubscribe' => CASH_PUBLIC_URL .
+							'/request/html?cash_request_type=people&cash_action=removeaddress&list_id=*|CASH_LISTID|*' .
+							'&address=*|EMAIL|*'
 					)
 				);
 			}
