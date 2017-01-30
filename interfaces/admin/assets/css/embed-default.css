@@ -317,6 +317,15 @@ input:focus placeholder{color:#111;}
 /* Buttons in overlay */
 
 .cm-lightboxed .cashmusic.element button {
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+	text-transform: capitalize;
+	-webkit-appearance:none;
+	vertical-align: middle;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
  	margin: 36px 0 0 0;
  	padding: 15px 0;
  	background: none;
@@ -327,6 +336,9 @@ input:focus placeholder{color:#111;}
  	width: 100%;
  	font-size: 12px;
  	font-family: 'Montserrat', sans-serif;
+ 	-webkit-transition:  0.3s  ease-in-out;
+    -moz-transition:  0.3s  ease-in-out;
+    trasition:  0.3s ease-in-out;
 }
 
 .cm-lightboxed .cashmusic.element button:hover, .cm-lightboxed .cashmusic.element button:active {
