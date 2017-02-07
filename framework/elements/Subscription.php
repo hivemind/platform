@@ -39,20 +39,42 @@ class Subscription extends ElementBase {
             $this->sessionSet("subscription_authenticated", true);
         }
 
-		// this is where we get data
-		$subscription_element = new SubscriptionElement\Data(
-            $plan_user_id,
-            $this->element_data['plan_id']
-			);
+        $plans = [];
 
-		$this->updateElementData($subscription_element->data);
+        foreach ($this->element_data['plans'] as $plan) {
+
+            $subscription_plan = new SubscriptionElement\Data(
+                $plan_user_id,
+                $plan['plan_id']
+            );
+
+            $plans[] = $subscription_plan->data;
+        }
+
+
+		// this is where we get data
+		$this->updateElementData(['all_plans'=>$plans]);
+
+        //TODO: just get the first one for now. later we can maybe have support for different payments method per plan
+        $this->element_data['paypal_connection'] =
+            isset($this->element_data['all_plans'][0]['paypal_connection']) ?
+            isset($this->element_data['all_plans'][0]['paypal_connection']) : false;
+
+        $this->element_data['stripe_public_key'] =
+            isset($this->element_data['all_plans'][0]['stripe_public_key']) ?
+            isset($this->element_data['all_plans'][0]['stripe_public_key']) : false;
+
+        //TODO: set shipping. need to find a way to differentiate plans here
+        $this->element_data['shipping'] =
+            isset($this->element_data['all_plans'][0]['shipping']) ?
+                isset($this->element_data['all_plans'][0]['shipping']) : false;
 
         if (!$this->element_data['paypal_connection'] && !$this->element_data['stripe_public_key']) {
             $this->setError("No valid payment connection found.");
         }
 
         // if we're logged in already, show them the my account button instead of login
-        if ($plan_id == $this->element_data['plan_id'] && $authenticated) {
+        if (in_array($plan_id, $this->element_data['plans']) && $authenticated) {
             $this->element_data['logged_in'] = true;
         }
 
