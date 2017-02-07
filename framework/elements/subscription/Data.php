@@ -65,7 +65,7 @@ class Data
 
         // get plan data or bust
         if ($plan_request->response['payload'] && !empty($plan_request->response['payload'][0])) {
-
+            error_log(json_encode($plan_request->response['payload'], JSON_PRETTY_PRINT));
             $payload = $plan_request->response['payload'][0];
 
             $this->data['plan_name'] = $payload['name'];
