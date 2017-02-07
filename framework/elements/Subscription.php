@@ -69,6 +69,10 @@ class Subscription extends ElementBase {
             isset($this->element_data['all_plans'][0]['shipping']) ?
                 isset($this->element_data['all_plans'][0]['shipping']) : false;
 
+        $this->element_data['public_url'] =
+            isset($this->element_data['all_plans'][0]['public_url']) ?
+                isset($this->element_data['all_plans'][0]['public_url']) : false;
+
         if (!$this->element_data['paypal_connection'] && !$this->element_data['stripe_public_key']) {
             $this->setError("No valid payment connection found.");
         }
@@ -76,6 +80,13 @@ class Subscription extends ElementBase {
         // if we're logged in already, show them the my account button instead of login
         if (in_array($plan_id, $this->element_data['plans']) && $authenticated) {
             $this->element_data['logged_in'] = true;
+        }
+
+        //TODO: this is also a problem if someone wants one plan to not be flexible price
+        $this->element_data['flexible_price'] = false;
+
+        foreach($this->element_data['all_plans'] as $plan) {
+            if ($plan['flexible_price'] == 1) $this->element_data['flexible_price'] = true;
         }
 
         // authentication process start

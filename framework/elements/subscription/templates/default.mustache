@@ -3,22 +3,33 @@
         {{error_message}}
     </div>
 {{/error_message}}
-{{#all_plans}}
-    <div class="cm-plan cm-plan-{{plan_id}}" style="width: 48%; margin-right: 2%; float: left;">
-        <h2>{{plan_name}}</h2>
-        <p>{{plan_description}}</p>
 
-          {{#flexible_price}}
-                <label class="cm-add-amount">Adjust your payment amount:</label>
-                <span class="cm-store-flexible-price">
+<h2>{{name}}</h2>
+<p>{{description}}</p>
+
+<select name="plan_id" id="plan_id" required>
+    <option value="">Select a plan</option>
+    {{#all_plans}}
+        <option value="{{plan_id}}">{{plan_name}}</option>
+    {{/all_plans}}
+</select>
+
+{{#all_plans}}
+    <input type="hidden" class="plan_id_per_plan" id="plan_id_{{plan_id}}" value="{{plan_id}}">
+    <input type="hidden" class="plan_price_per_plan" id="plan_price_{{plan_id}}" value="{{plan_price}}">
+    <input type="hidden" class="plan_minimum_price_per_plan" id="plan_minimum_price_{{plan_id}}" value="{{minimum_price}}">
+    <input type="hidden" class="plan_interval_per_plan" id="plan_interval_{{plan_id}}" value="{{plan_interval}}">
+{{/all_plans}}
+
+{{#flexible_price}}
+    <label class="cm-add-amount">Adjust your payment amount:</label>
+    <span class="cm-store-flexible-price">
                     <span class="cm-store-currency">{{currency}}</span>
                 <input type="number" min="{{minimum_price}}" name="plan_amount" id="plan_flexible_price" value="{{plan_price}}" autocomplete="off" >
               </span>
-              </span>
-          {{/flexible_price}}
-        <a href="#" class="button cm-subscribe" data-price="{{plan_price}}" data-min="{{minimum_price}}" data-plan-id="{{plan_id}}" id="subscribe">$<span class="amount" id="plan_price">{{plan_price}}</span>/{{plan_interval}} - Subscribe</a>
-    </div>
-{{/all_plans}}
+    </span>
+{{/flexible_price}}
+<a href="#" class="button cm-subscribe" data-price="{{plan_price}}" data-min="{{minimum_price}}" data-plan-id="{{plan_id}}" id="subscribe">$<span class="amount" id="plan_price">{{plan_price}}</span>/<span id="plan_interval">{{plan_interval}}</span> - Subscribe</a>
 
 {{#logged_in}}
     <a href="#" class="cm-my-account cm-secondary-link">My Account</a>
@@ -31,7 +42,38 @@
 <div style="clear:both;"></div>
 
 <script type="text/javascript">
-(function() {
+    function updatePlanPrice(element, plan_id) {
+
+        var price = document.querySelector("#plan_price_" + plan_id).value;
+        element.innerText = price;
+        document.querySelector("#plan_flexible_price").value = price;
+    }
+
+    function updateMinimumPrice(element, plan_id) {
+        element.dataset.min = document.querySelector("#plan_minimum_price_" + plan_id).value;
+    }
+
+    function updatePlanInterval(element, plan_id) {
+        element.innerText = document.querySelector("#plan_interval_" + plan_id).value;
+    }
+
+    function getSelectedPlanId(element) {
+        if (element) {
+            var selected_index = 1;
+
+            if (element.selectedIndex > 0) {
+                selected_index = element.selectedIndex;
+            } else {
+                element.selectedIndex = 1;
+            }
+
+            return element.options[selected_index].value;
+        } else {
+            return document.getElementsByClassName("plan_id_per_plan")[0].value;
+        }
+    }
+
+    (function() {
     'use strict';
     var cm = window.cashmusic;
 
@@ -65,21 +107,45 @@
     cm.events.add(cm,'ready', function(e) {
         cm.session.start();
 
-        if (verification !== false) {
-            cm.overlay.reveal({"element":"{{element_id}}","endpoint":"{{public_url}}","state":"verified"});
-        }
+        var login = document.querySelector('.cm-login');
 
         var plan_price = document.getElementById('plan_price');
         var subscribe_button = document.querySelector('.cm-subscribe');
         var flexible_price = document.getElementById('plan_flexible_price');
 
-        var login = document.querySelector('.cm-login');
+        var plan_interval = document.getElementById('plan_interval');
 
         if (login) {
             cm.events.add(login, 'click', function (e) {
                 e.preventDefault();
                 cm.overlay.reveal({"element":"{{element_id}}","endpoint":"{{public_url}}","state":"login"});
             });
+        }
+
+        var plan_selection = document.querySelector('#plan_id');
+
+        var plan_id = getSelectedPlanId(plan_selection);
+
+        updatePlanPrice(plan_price, plan_id);
+        updateMinimumPrice(subscribe_button, plan_id);
+        updatePlanInterval(plan_interval, plan_id);
+
+
+        if (plan_selection) {
+            cm.events.add(plan_selection, 'change', function (e) {
+                var plan_id = getSelectedPlanId(plan_selection);
+
+                updatePlanPrice(plan_price, plan_id);
+                updateMinimumPrice(subscribe_button, plan_id);
+                updatePlanInterval(plan_interval, plan_id);
+
+            });
+
+        }
+
+
+        if (verification !== false) {
+            cm.overlay.reveal({"element":"{{element_id}}","endpoint":"{{public_url}}","state":"verified"});
         }
 
         var account = document.querySelector('.cm-my-account');
