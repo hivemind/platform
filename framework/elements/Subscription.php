@@ -56,13 +56,17 @@ class Subscription extends ElementBase {
 		$this->updateElementData(['all_plans'=>$plans]);
 
         //TODO: just get the first one for now. later we can maybe have support for different payments method per plan
+        $this->element_data['currency'] =
+            isset($this->element_data['all_plans'][0]['currency']) ?
+                $this->element_data['all_plans'][0]['currency'] : "$";
+
         $this->element_data['paypal_connection'] =
             isset($this->element_data['all_plans'][0]['paypal_connection']) ?
-            isset($this->element_data['all_plans'][0]['paypal_connection']) : false;
+            $this->element_data['all_plans'][0]['paypal_connection'] : false;
 
         $this->element_data['stripe_public_key'] =
             isset($this->element_data['all_plans'][0]['stripe_public_key']) ?
-            isset($this->element_data['all_plans'][0]['stripe_public_key']) : false;
+            $this->element_data['all_plans'][0]['stripe_public_key'] : false;
 
         //TODO: set shipping. need to find a way to differentiate plans here
         $this->element_data['shipping'] =

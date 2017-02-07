@@ -42,10 +42,12 @@
 <div style="clear:both;"></div>
 
 <script type="text/javascript">
-    function updatePlanPrice(element, plan_id) {
+    function updatePlanPrice(element, button_element, plan_id) {
 
         var price = document.querySelector("#plan_price_" + plan_id).value;
         element.innerText = price;
+        button_element.dataset.price = price;
+
         document.querySelector("#plan_flexible_price").value = price;
     }
 
@@ -67,10 +69,14 @@
                 element.selectedIndex = 1;
             }
 
-            return element.options[selected_index].value;
+            var plan_id = element.options[selected_index].value;
         } else {
-            return document.getElementsByClassName("plan_id_per_plan")[0].value;
+            var plan_id = document.getElementsByClassName("plan_id_per_plan")[0].value;
         }
+
+        document.querySelector(".cm-subscribe").setAttribute("data-plan-id", plan_id);
+
+        return plan_id;
     }
 
     (function() {
@@ -123,10 +129,9 @@
         }
 
         var plan_selection = document.querySelector('#plan_id');
-
         var plan_id = getSelectedPlanId(plan_selection);
 
-        updatePlanPrice(plan_price, plan_id);
+        updatePlanPrice(plan_price, subscribe_button, plan_id);
         updateMinimumPrice(subscribe_button, plan_id);
         updatePlanInterval(plan_interval, plan_id);
 
@@ -135,7 +140,7 @@
             cm.events.add(plan_selection, 'change', function (e) {
                 var plan_id = getSelectedPlanId(plan_selection);
 
-                updatePlanPrice(plan_price, plan_id);
+                updatePlanPrice(plan_price, subscribe_button, plan_id);
                 updateMinimumPrice(subscribe_button, plan_id);
                 updatePlanInterval(plan_interval, plan_id);
 
@@ -198,13 +203,12 @@
                         "recurring": true,
                         "shipping": shipping,
                         "total": "{{currency}}" + parseFloat(price),
-                        "transaction_message": "/{{interval}}"
+                        "transaction_message": "/"+document.querySelector("#plan_interval").innerText
                     });
 
                 });
 
                 cm.events.add(cm, 'checkoutdata', function (payment) {
-                    console.log("hey hey hey")
 /*                    e.preventDefault();
                     e.stopPropagation();*/
 
@@ -262,13 +266,11 @@
         }
 
         function initiatePayment(f) {
-            console.log("initiatePayment fired");
             //document.body.appendChild(f);
             cm.ajax.send(
                     '{{public_url}}/request/payload',
                     cm.ajax.encodeForm(f),
                     function(details) {
-                        console.log("inside the ajax call response");
                         if (details.substring(0,4) == 'http') {
                             top.location.href = details;
                         } else if (details == '200') {
